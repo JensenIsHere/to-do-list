@@ -108,8 +108,9 @@ header {
 
 .task_card {
   display: flex;
-  align-items: center;
+  align-items: left;
   justify-content: space-between;
+  margin: 20px 0;
   font-size: 1.1rem;
   background-color: rgb(173, 173, 173);
 }
