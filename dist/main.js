@@ -15,7 +15,7 @@
   \**********************/
 /***/ (() => {
 
-eval("\n\n//# sourceURL=webpack://to-do-list/./src/index.js?");
+eval("const task = (newTitle, newDesc, newDue, newMatrix) => {\n  let title = newTitle;\n  let desc = newDesc;\n  let due = newDue;\n  let matrix = newMatrix;\n  let done = false;\n\n  const getTitle = () => title;\n\n  const getDesc = () => desc;\n\n  const getDueDate = () => due.getTime();\n\n  const getMatrix = () => matrix;\n\n  const isDone = () => done;\n\n  const changeTitle = (newTitle) => (title = newTitle);\n\n  const changeDesc = (newDesc) => (desc = newDesc);\n\n  const changeDueDate = (newDueDate) => (due = newDueDate);\n\n  const changeMatrix = (newMatrix) => (matrix = newMatrix);\n\n  const toggleDone = () => (done = !done);\n\n  return {\n    getTitle,\n    getDesc,\n    getDueDate,\n    getMatrix,\n    isDone,\n    changeTitle,\n    changeDesc,\n    changeDueDate,\n    changeMatrix,\n    toggleDone,\n  };\n};\n\nconst toDoList = () => {\n  let list = [];\n\n  const getList = () => list;\n\n  const getItem = (pos) => list[pos];\n\n  const addTask = (newTask) => list.push(newTask);\n\n  const delTask = (pos) => list.splice(pos, 1);\n\n  //const sortByDate = () => {}\n\n  const doneFirst = () => {\n    let doneItems = [];\n    let notDoneItems = [];\n\n    notDoneItems = filter((item) => item.isDone == false);\n    doneItems = filter((item) => item.isDone == true);\n\n    list = notDoneItems.concat(doneItems);\n  };\n\n  //const getMatrix = () => {}\n\n  //const countMatrix = () => {}\n\n  return { getList, getItem, addTask, delTask };\n};\n\n\n//# sourceURL=webpack://to-do-list/./src/index.js?");
 
 /***/ })
 

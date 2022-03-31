@@ -1,0 +1,169 @@
+* {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  /* border: 1px solid red; */
+}
+
+body {
+  margin: 0;
+}
+
+header {
+  position: fixed;
+  width: 100%;
+  height: 60px;
+  padding-left: 125px;
+  background-color: rgb(85, 85, 85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: rgb(255, 255, 255);
+}
+
+.main {
+  display: flex;
+}
+
+.sidebar {
+  width: 250px;
+  height: 110%;
+  position: fixed;
+  top: -15px;
+  flex: 0 0 auto;
+  background-color: rgb(85, 85, 85);
+}
+
+.logo_text {
+  margin: 20px;
+  font: 500;
+  font-size: 2rem;
+  text-align: center;
+  color: rgb(255, 255, 255);
+}
+
+.add_task_button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 160px;
+  height: 60px;
+  margin: 20px auto;
+  padding: 5px;
+  font: 500;
+  font-size: 1.8rem;
+  color: rgb(255, 255, 255);
+  background-color: rgb(173, 173, 173);
+  border-radius: 40px;
+  box-shadow: 2px 2px 0 #444;
+}
+
+.matrix {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 200px;
+  height: 80px;
+  margin: 20px;
+  padding: 5px;
+  font: 500;
+  font-size: 2.5rem;
+  color: rgb(255, 255, 255);
+  border-radius: 12px;
+  box-shadow: 2px 2px 0 #444;
+}
+
+.UI {
+  background-color: rgb(199, 0, 0);
+}
+
+.NI {
+  background-color: rgb(1, 150, 9);
+}
+
+.UN {
+  background-color: rgb(0, 63, 199);
+}
+
+.NN {
+  background-color: rgb(150, 0, 209);
+}
+
+.matrix_name {
+  margin-left: 15px;
+}
+
+.matrix_count {
+  margin-right: 15px;
+}
+
+.list {
+  margin-left: 250px;
+  margin-top: 60px;
+}
+
+.list_content {
+  margin: 20px;
+}
+
+.task_card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1.1rem;
+  background-color: rgb(173, 173, 173);
+}
+
+.checkbox {
+  margin: 5px;
+  background-color: rgb(253, 53, 53);
+  font-size: 1.12rem;
+}
+
+.task_info {
+  margin: 5px;
+  background-color: rgb(148, 247, 156);
+  font-size: 1.13rem;
+}
+
+.info_divide {
+  display: flex;
+  align-items: center;
+  justify-content: left;
+}
+
+.matrix_src {
+  margin: 5px;
+  font-size: 1.14rem;
+}
+
+.due_date {
+  margin: 5px;
+  font-size: 1.15rem;
+}
+
+.task_title {
+  margin: 5px;
+  font-size: 1.16rem;
+}
+
+.task_desc {
+  margin: 5px;
+  font-size: 1.17rem;
+}
+
+.options {
+  margin: 5px;
+  background-color: rgb(132, 237, 255);
+  font-size: 1.18rem;
+}
+
+.edit {
+  margin: 5px;
+  font-size: 1.19rem;
+}
+
+.delete {
+  margin: 5px;
+  font-size: 1.2rem;
+}

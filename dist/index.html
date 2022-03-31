@@ -1,15 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ToDoJS</title>
-</head>
-<body>
-  <div>
-    
-  </div>
-  <script src="./main.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style.css" />
+    <title>DoJR</title>
+  </head>
+  <body>
+    <header>All Tasks</header>
+    <div class="main">
+      <div class="sidebar">
+        <div class="logo_text">
+          <p>DoJR</p>
+        </div>
+        <div class="add_task_button">Add Task +</div>
+        <div class="matrix UI">
+          <div class="matrix_name">U & I</div>
+          <div class="matrix_count" data-type="UI">10</div>
+        </div>
+        <div class="matrix NI">
+          <div class="matrix_name">N & I</div>
+          <div class="matrix_count" data-type="NI">3</div>
+        </div>
+        <div class="matrix UN">
+          <div class="matrix_name">U & N</div>
+          <div class="matrix_count" data-type="UN">2</div>
+        </div>
+        <div class="matrix NN">
+          <div class="matrix_name">N & N</div>
+          <div class="matrix_count" data-type="NN">10</div>
+        </div>
+      </div>
+      <div class="list">
+        <div class="list_content">
+          <div class="task_card">
+            <div class="checkbox">C</div>
+            <div class="task_info">
+              <div class="info_divide">
+                <div class="matrix_src">R</div>
+                <div class="due_date">1/1/22</div>
+                <div class="task_title">Buy Milk</div>
+              </div>
+              <div class="task_desc">You need to buy milk. Now.</div>
+            </div>
+            <div class="options">
+              <div class="edit">Edit</div>
+              <div cla="delete">Delete</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="./main.js"></script>
+  </body>
 </html>
