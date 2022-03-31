@@ -57,8 +57,21 @@ const toDoList = () => {
   const sortByDate = () => {
     for (let i = 0; i < list.length - 1; i++) {
       for (let j = i; j < list.length - 1; j++) {
-        if (list[j].getDueDate() > list[j + 1].getDueDate())
+        console.log(
+          "Comparing " +
+            list[j].getDueDate() +
+            " with " +
+            list[j + 1].getDueDate()
+        );
+        if (list[j].getDueDate() > list[j + 1].getDueDate()) {
+          console.log(
+            "Swapping" +
+              list[j].getDueDate() +
+              " and " +
+              list[j + 1].getDueDate()
+          );
           swapElements(j, j + 1);
+        }
       }
     }
   };
@@ -166,6 +179,53 @@ function renderList(currentList) {
   }
 }
 
+function toggleOverlay() {
+  if (document.querySelector(".black_overlay").style.display == "block") {
+    document.querySelector(".black_overlay").style.display = "none";
+    document.querySelector(".white_content").style.display = "none";
+  } else {
+    document.querySelector(".black_overlay").style.display = "block";
+    document.querySelector(".white_content").style.display = "block";
+  }
+}
+
+function formValidate() {
+  let title = document.getElementById("title").value;
+  let desc = document.getElementById("desc").value;
+  let date = document.getElementById("due_date").value;
+  return title != "" && desc != "" && date != "";
+}
+
+function getFormMatrixValue() {
+  let inputs = document.querySelectorAll("input");
+
+  for (let i = 2; i < 6; i++) {
+    if (inputs[i].checked == true) {
+      matrix = inputs[i].id;
+      break;
+    }
+  }
+
+  return matrix;
+}
+
+function formNewTask(currentList) {
+  let title = document.getElementById("title").value;
+  let desc = document.getElementById("desc").value;
+  let matrix = getFormMatrixValue();
+  let date = document.getElementById("due_date").valueAsNumber;
+
+  let newTask = task(title, desc, date, matrix);
+  currentList.addTask(newTask);
+}
+
+function formReset() {
+  document.getElementById("title").value = "";
+  document.getElementById("desc").value = "";
+  document.querySelectorAll("input")[2].checked = true;
+  document.getElementById("due_date").value = "";
+}
+
 var trialTask1 = task(
   "Make Grocery List",
   "Make a grocery list before you pick up Jennita tonight",
@@ -211,8 +271,27 @@ currentList.addTask(trialTask3);
 currentList.addTask(trialTask4);
 currentList.addTask(trialTask2);
 
-console.log(currentList.countMatrix("UI"));
+renderList(currentList.getList());
 
-renderList(currentList.getMatrix("UI"));
+document.querySelector(".add_task_button").addEventListener("click", () => {
+  toggleOverlay();
+});
 
-console.log(currentList.getList());
+document.getElementById("add_task").addEventListener("click", () => {
+  if (formValidate()) {
+    formNewTask(currentList);
+    formReset();
+    nukeList();
+    renderList(currentList.getList());
+    toggleOverlay();
+  } else alert("Please fill in all fields");
+});
+
+document.getElementById("clear").addEventListener("click", () => {
+  formReset();
+});
+
+document.getElementById("cancel").addEventListener("click", () => {
+  formReset();
+  toggleOverlay();
+});
