@@ -73,6 +73,10 @@ header {
   box-shadow: 2px 2px 0 #444;
 }
 
+.all {
+  background-color: rgb(173, 173, 173);
+}
+
 .UI {
   background-color: rgb(199, 0, 0);
 }

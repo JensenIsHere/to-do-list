@@ -48,28 +48,20 @@ const toDoList = () => {
 
   const addTask = (newTask) => {
     list.push(newTask);
-    sortByDate();
-    doneFirst();
+    sortMatrix();
   };
 
   const delTask = (pos) => list.splice(pos, 1);
 
+  const sortMatrix = () => {
+    sortByDate();
+    doneFirst();
+  };
+
   const sortByDate = () => {
     for (let i = 0; i < list.length - 1; i++) {
       for (let j = i; j < list.length - 1; j++) {
-        console.log(
-          "Comparing " +
-            list[j].getDueDate() +
-            " with " +
-            list[j + 1].getDueDate()
-        );
         if (list[j].getDueDate() > list[j + 1].getDueDate()) {
-          console.log(
-            "Swapping" +
-              list[j].getDueDate() +
-              " and " +
-              list[j + 1].getDueDate()
-          );
           swapElements(j, j + 1);
         }
       }
@@ -108,13 +100,34 @@ const toDoList = () => {
     return filteredList.length;
   };
 
-  return { getList, getItem, addTask, delTask, getMatrix, countMatrix };
+  return {
+    getList,
+    getItem,
+    addTask,
+    delTask,
+    getMatrix,
+    countMatrix,
+    sortMatrix,
+  };
 };
 
 //Beginning of DOM mainpulation
 
+function taskCountUpdate(list) {
+  document.getElementById("count_UI").innerHTML = list.countMatrix("UI");
+  document.getElementById("count_NI").innerHTML = list.countMatrix("NI");
+  document.getElementById("count_UN").innerHTML = list.countMatrix("UN");
+  document.getElementById("count_NN").innerHTML = list.countMatrix("NN");
+}
+
 function nukeList() {
   document.querySelector(".list_content").innerHTML = "";
+}
+
+function divWithClass(newClass) {
+  let element = document.createElement("div");
+  element.className = newClass;
+  return element;
 }
 
 function createTaskCard(currentTask, pos) {
@@ -126,7 +139,7 @@ function createTaskCard(currentTask, pos) {
 
   element = divWithClass("checkbox");
   element.setAttribute("data-pos", pos);
-  element.innerHTML = "C";
+  element.innerHTML = currentTask.isDone() ? "X" : "O";
   taskCard.querySelector(".task_card").appendChild(element);
 
   element = divWithClass("task_info");
@@ -167,15 +180,11 @@ function createTaskCard(currentTask, pos) {
   document.querySelector(".list_content").appendChild(taskCard);
 }
 
-function divWithClass(newClass) {
-  let element = document.createElement("div");
-  element.className = newClass;
-  return element;
-}
-
-function renderList(currentList) {
-  for (let i = 0; i < currentList.length; i++) {
-    createTaskCard(currentList[i], i);
+function renderList(object) {
+  object.matrix = object.matrix || "all";
+  for (let i = 0; i < object.list.length; i++) {
+    if (object.matrix == "all" || object.list[i].getMatrix() == object.matrix)
+      createTaskCard(object.list[i], i);
   }
 }
 
@@ -209,14 +218,14 @@ function getFormMatrixValue() {
   return matrix;
 }
 
-function formNewTask(currentList) {
+function formNewTask(list) {
   let title = document.getElementById("title").value;
   let desc = document.getElementById("desc").value;
   let matrix = getFormMatrixValue();
   let date = document.getElementById("due_date").valueAsNumber;
 
   let newTask = task(title, desc, date, matrix);
-  currentList.addTask(newTask);
+  list.addTask(newTask);
 }
 
 function formReset() {
@@ -271,10 +280,58 @@ currentList.addTask(trialTask3);
 currentList.addTask(trialTask4);
 currentList.addTask(trialTask2);
 
-renderList(currentList.getList());
+renderList({ list: currentList.getList() });
+taskCountUpdate(currentList);
 
 document.querySelector(".add_task_button").addEventListener("click", () => {
   toggleOverlay();
+});
+
+document.querySelector(".all").addEventListener("click", () => {
+  nukeList();
+  renderList({ list: currentList.getList() });
+  document.querySelector("header").innerHTML = "All Tasks";
+});
+
+document.querySelector(".UI").addEventListener("click", () => {
+  nukeList();
+  renderList({ list: currentList.getList(), matrix: "UI" });
+  document.querySelector("header").innerHTML = "Urgent and Important";
+  document.querySelector("header").dataset.matrix = "UI";
+});
+
+document.querySelector(".NI").addEventListener("click", () => {
+  nukeList();
+  renderList({ list: currentList.getList(), matrix: "NI" });
+  document.querySelector("header").innerHTML = "Not Urgent but Important";
+  document.querySelector("header").dataset.matrix = "NI";
+});
+
+document.querySelector(".UN").addEventListener("click", () => {
+  nukeList();
+  renderList({ list: currentList.getList(), matrix: "UN" });
+  document.querySelector("header").innerHTML = "Urgent but Not Important";
+  document.querySelector("header").dataset.matrix = "UN";
+});
+
+document.querySelector(".NN").addEventListener("click", () => {
+  nukeList();
+  renderList({ list: currentList.getList(), matrix: "NN" });
+  document.querySelector("header").innerHTML = "Neither Urgent nor Important";
+  document.querySelector("header").dataset.matrix = "NN";
+});
+
+document.addEventListener("click", (e) => {
+  if (e.target.className == "checkbox") {
+    let pos = e.target.dataset.pos;
+    currentList.getList()[e.target.dataset.pos].toggleDone();
+    currentList.sortMatrix();
+    nukeList();
+    renderList({
+      list: currentList.getList(),
+      matrix: document.querySelector("header").dataset.matrix,
+    });
+  }
 });
 
 document.getElementById("add_task").addEventListener("click", () => {
@@ -283,6 +340,7 @@ document.getElementById("add_task").addEventListener("click", () => {
     formReset();
     nukeList();
     renderList(currentList.getList());
+    taskCountUpdate(currentList);
     toggleOverlay();
   } else alert("Please fill in all fields");
 });
