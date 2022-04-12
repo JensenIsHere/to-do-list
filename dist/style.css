@@ -21,6 +21,10 @@ header {
   color: rgb(255, 255, 255);
 }
 
+div {
+  cursor: default;
+}
+
 .main {
   display: flex;
 }

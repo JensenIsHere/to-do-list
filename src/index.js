@@ -1,3 +1,5 @@
+import { format, parseISO } from "date-fns";
+
 const task = (newTitle, newDesc, newDue, newMatrix) => {
   let title = newTitle;
   let desc = newDesc;
@@ -53,6 +55,13 @@ const toDoList = () => {
 
   const delTask = (pos) => list.splice(pos, 1);
 
+  const editTask = (pos, title, desc, matrix, dueDate) => {
+    list[pos].changeTitle(title);
+    list[pos].changeDesc(desc);
+    list[pos].changeMatrix(matrix);
+    list[pos].changeDueDate(dueDate);
+  };
+
   const sortMatrix = () => {
     sortByDate();
     doneFirst();
@@ -105,6 +114,7 @@ const toDoList = () => {
     getItem,
     addTask,
     delTask,
+    editTask,
     getMatrix,
     countMatrix,
     sortMatrix,
@@ -153,7 +163,7 @@ function createTaskCard(currentTask, pos) {
   taskCard.querySelector(".info_divide").appendChild(element);
 
   element = divWithClass("due_date");
-  element.innerHTML = currentTask.getDueDate();
+  element.innerHTML = format(new Date(currentTask.getDueDate()), "MMM dd");
   taskCard.querySelector(".info_divide").appendChild(element);
 
   element = divWithClass("task_title");
@@ -188,6 +198,16 @@ function renderList(object) {
   }
 }
 
+function updateScreen(currentList) {
+  nukeList();
+  renderList({
+    list: currentList.getList(),
+    matrix: document.querySelector("header").dataset.matrix,
+  });
+  taskCountUpdate(currentList);
+  saveList(currentList);
+}
+
 function toggleOverlay() {
   if (document.querySelector(".black_overlay").style.display == "block") {
     document.querySelector(".black_overlay").style.display = "none";
@@ -207,7 +227,9 @@ function formValidate() {
 
 function getFormMatrixValue() {
   let inputs = document.querySelectorAll("input");
+  let matrix;
 
+  // Searches for the checked matrix in the form's radio buttons
   for (let i = 2; i < 6; i++) {
     if (inputs[i].checked == true) {
       matrix = inputs[i].id;
@@ -218,12 +240,17 @@ function getFormMatrixValue() {
   return matrix;
 }
 
+//Corrects the date to be in UTC so tasks aren't one day behind
+function correctDate(date) {
+  return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+}
+
 function formNewTask(list) {
   let title = document.getElementById("title").value;
   let desc = document.getElementById("desc").value;
   let matrix = getFormMatrixValue();
-  let date = document.getElementById("due_date").valueAsNumber;
-
+  let date = new Date(document.getElementById("due_date").value);
+  date = correctDate(date);
   let newTask = task(title, desc, date, matrix);
   list.addTask(newTask);
 }
@@ -235,114 +262,98 @@ function formReset() {
   document.getElementById("due_date").value = "";
 }
 
-var trialTask1 = task(
-  "Make Grocery List",
-  "Make a grocery list before you pick up Jennita tonight",
-  100000000,
-  "UI"
-);
+function populateAddBox() {
+  document.getElementById("action").dataset.status = "add";
+  document.getElementById("action").textContent = "Add Task";
+  document.querySelector("legend").textContent = "Add a Task";
+}
 
-var trialTask2 = task(
-  "Pick up Jennita",
-  "Get Jennita from the airport",
-  100100000,
-  "UI"
-);
-
-var trialTask3 = task(
-  "Create a to-do list website",
-  "Make a to-do list website to fulfill the project requirements",
-  90000000,
-  "NI"
-);
-
-var trialTask4 = task(
-  "Sweep kitty litter",
-  "Sweep up the kitty litter in the laundry room",
-  90200000,
-  "UN"
-);
-
-var trialTask5 = task(
-  "Watch YouTube videos",
-  "Waste time and slack off by watching videos online",
-  90300000,
-  "NN"
-);
-
-trialTask5.toggleDone();
-
-var currentList = toDoList();
-
-currentList.addTask(trialTask1);
-currentList.addTask(trialTask5);
-currentList.addTask(trialTask3);
-currentList.addTask(trialTask4);
-currentList.addTask(trialTask2);
-
-renderList({ list: currentList.getList() });
-taskCountUpdate(currentList);
+function populateEditBox(list, pos) {
+  document.getElementById("title").value = list.getItem(pos).getTitle();
+  document.getElementById("desc").value = list.getItem(pos).getDesc();
+  document.querySelectorAll("input")[2].checked = true;
+  document.getElementById("due_date").value = format(
+    list.getItem(pos).getDueDate(),
+    "yyyy-MM-dd"
+  );
+  document.getElementById(list.getItem(pos).getMatrix()).checked = true;
+  document.getElementById("action").dataset.status = "edit";
+  document.getElementById("action").dataset.pos = pos;
+  document.getElementById("action").textContent = "Edit Task";
+  document.querySelector("legend").textContent = "Edit Task";
+}
 
 document.querySelector(".add_task_button").addEventListener("click", () => {
+  populateAddBox();
   toggleOverlay();
 });
 
 document.querySelector(".all").addEventListener("click", () => {
-  nukeList();
-  renderList({ list: currentList.getList() });
   document.querySelector("header").innerHTML = "All Tasks";
+  document.querySelector("header").dataset.matrix = "all";
+  updateScreen(currentList);
 });
 
 document.querySelector(".UI").addEventListener("click", () => {
-  nukeList();
-  renderList({ list: currentList.getList(), matrix: "UI" });
   document.querySelector("header").innerHTML = "Urgent and Important";
   document.querySelector("header").dataset.matrix = "UI";
+  updateScreen(currentList);
 });
 
 document.querySelector(".NI").addEventListener("click", () => {
-  nukeList();
-  renderList({ list: currentList.getList(), matrix: "NI" });
   document.querySelector("header").innerHTML = "Not Urgent but Important";
   document.querySelector("header").dataset.matrix = "NI";
+  updateScreen(currentList);
 });
 
 document.querySelector(".UN").addEventListener("click", () => {
-  nukeList();
-  renderList({ list: currentList.getList(), matrix: "UN" });
   document.querySelector("header").innerHTML = "Urgent but Not Important";
   document.querySelector("header").dataset.matrix = "UN";
+  updateScreen(currentList);
 });
 
 document.querySelector(".NN").addEventListener("click", () => {
-  nukeList();
-  renderList({ list: currentList.getList(), matrix: "NN" });
   document.querySelector("header").innerHTML = "Neither Urgent nor Important";
   document.querySelector("header").dataset.matrix = "NN";
+  updateScreen(currentList);
 });
 
 document.addEventListener("click", (e) => {
   if (e.target.className == "checkbox") {
     let pos = e.target.dataset.pos;
-    currentList.getList()[e.target.dataset.pos].toggleDone();
+    currentList.getItem(e.target.dataset.pos).toggleDone();
     currentList.sortMatrix();
-    nukeList();
-    renderList({
-      list: currentList.getList(),
-      matrix: document.querySelector("header").dataset.matrix,
-    });
+    updateScreen(currentList);
   }
-});
-
-document.getElementById("add_task").addEventListener("click", () => {
-  if (formValidate()) {
-    formNewTask(currentList);
-    formReset();
-    nukeList();
-    renderList(currentList.getList());
-    taskCountUpdate(currentList);
+  if (e.target.className == "delete") {
+    let pos = e.target.dataset.pos;
+    currentList.delTask(pos);
+    currentList.sortMatrix();
+    updateScreen(currentList);
+  }
+  if (e.target.className == "edit") {
+    let pos = e.target.dataset.pos;
+    populateEditBox(currentList, pos);
     toggleOverlay();
-  } else alert("Please fill in all fields");
+  }
+  if (e.target.dataset.status == "add") {
+    if (formValidate()) {
+      formNewTask(currentList);
+      formReset();
+      updateScreen(currentList);
+      toggleOverlay();
+    } else alert("Please fill in all fields");
+  }
+  if (e.target.dataset.status == "edit") {
+    if (formValidate()) {
+      currentList.delTask(document.getElementById("action").dataset.pos);
+      document.getElementById("action").dataset.pos = "";
+      formNewTask(currentList);
+      formReset();
+      updateScreen(currentList);
+      toggleOverlay();
+    } else alert("Please fill in all fields");
+  }
 });
 
 document.getElementById("clear").addEventListener("click", () => {
@@ -353,3 +364,40 @@ document.getElementById("cancel").addEventListener("click", () => {
   formReset();
   toggleOverlay();
 });
+
+//Local Storage manipulation
+
+function loadList(list) {
+  let i = 0;
+  let currentTask;
+
+  while (localStorage.getItem("title" + i)) {
+    currentTask = task(
+      localStorage.getItem("title" + i),
+      localStorage.getItem("desc" + i),
+      localStorage.getItem("dueDate" + i),
+      localStorage.getItem("matrix" + i)
+    );
+    if (localStorage.getItem("done" + i) == true) currentTask.toggleDone();
+    list.addTask(currentTask);
+    i += 1;
+  }
+  updateScreen(list);
+}
+
+function saveList(list) {
+  localStorage.clear();
+
+  for (let i = 0; i < list.getList().length; i++) {
+    localStorage.setItem("title" + i, list.getItem(i).getTitle());
+    localStorage.setItem("desc" + i, list.getItem(i).getDesc());
+    localStorage.setItem("dueDate" + i, list.getItem(i).getDueDate());
+    localStorage.setItem("matrix" + i, list.getItem(i).getMatrix());
+    localStorage.setItem("done" + i, list.getItem(i).isDone());
+  }
+}
+
+//Program
+
+var currentList = toDoList();
+loadList(currentList);
